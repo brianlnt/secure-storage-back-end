@@ -34,7 +34,7 @@ public class UserEntity extends Auditable{
     private boolean mfa;
     @JsonIgnore
     private String qrCodeSecret;
-    @Column(columnDefinition = "TEXT") //because by default, VARCHAR columns are limited in size (255) use "TEXT" for larger storage
+    @Column(columnDefinition = "text") //because by default, VARCHAR columns are limited in size (255) use "TEXT" for larger storage
     private String qrCodeImageUri;
     @ManyToOne
     @JoinTable(
