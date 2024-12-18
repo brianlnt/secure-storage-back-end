@@ -29,13 +29,13 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     @Async //allows you to run methods in separate threads so the main thread is not blocked.
-    public void sendNewAccountEmail(String name, String toEmail, String token) {
+    public void sendNewAccountEmail(String name, String toEmail, String key) {
         try{
             SimpleMailMessage message = new SimpleMailMessage();
             message.setSubject(NEW_USER_ACCOUNT_VERIFICATION);
             message.setFrom(fromEmail);
             message.setTo(toEmail);
-            message.setText(getNewAccountMessage(name, host, token));
+            message.setText(getNewAccountMessage(name, host, key));
             sender.send(message);
         } catch (Exception exception){
             log.error(exception.getMessage());
@@ -45,13 +45,13 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     @Async //allows you to run methods in separate threads so the main thread is not blocked.
-    public void sendPasswordResetEmail(String name, String toEmail, String token) {
+    public void sendPasswordResetEmail(String name, String toEmail, String key) {
         try{
             SimpleMailMessage message = new SimpleMailMessage();
             message.setSubject(RESET_PASSWORD_REQUEST);
             message.setFrom(fromEmail);
             message.setTo(toEmail);
-            message.setText(getResetPasswordMessage(name, host, token));
+            message.setText(getResetPasswordMessage(name, host, key));
             sender.send(message);
         } catch (Exception exception){
             log.error(exception.getMessage());
