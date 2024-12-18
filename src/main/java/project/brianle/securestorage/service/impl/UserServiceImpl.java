@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
     private final CredentialRepository credentialRepository;
     private final ConfirmationRepository confirmationRepository;
 //    private final BCriptPasswordEncoder encoder;
-    private ApplicationEventPublisher publisher;
+    private final ApplicationEventPublisher publisher;
 
     @Override
     public void createUser(String firstName, String lastName, String email, String password) {

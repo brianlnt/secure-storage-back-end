@@ -42,7 +42,7 @@ public abstract class Auditable {
 
     @PrePersist
     public void beforePersist(){
-        Long userId = RequestContext.getUserId();
+        Long userId = 0L; //RequestContext.getUserId();
         if(userId == null){ throw new ApiException("Cannot persist entity without user ID"); }
         setCreatedBy(userId);
         setCreatedAt(LocalDateTime.now());
@@ -52,7 +52,7 @@ public abstract class Auditable {
 
     @PreUpdate
     public void beforeUpdate(){
-        Long userId = RequestContext.getUserId();
+        Long userId = 0L; //RequestContext.getUserId();
         if(userId == null){ throw new ApiException("Cannot update entity without user ID"); }
         setUpdatedBy(userId);
         setUpdatedAt(LocalDateTime.now());
