@@ -31,37 +31,37 @@ public class FilterChainConfiguration {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request ->
-                        request.anyRequest().authenticated())
-                .httpBasic(Customizer.withDefaults())
-                .formLogin(AbstractHttpConfigurer::disable)
+                        request.requestMatchers("/user/login").permitAll()
+                        .anyRequest().authenticated())
+//                .httpBasic(Customizer.withDefaults())
+//                .formLogin(AbstractHttpConfigurer::disable)
                 .build();
     }
 
-    @Bean
+    /*@Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder(){
         return new BCryptPasswordEncoder();
-    }
+    }*/
 
     @Bean
     public UserDetailsService userDetailsService() {
         var junior = User.withUsername("brian")
-                .password(bCryptPasswordEncoder().encode("letmein"))
+                .password("letmein")
                 .roles("USER")
                 .build();
 
         var hanna = User.withUsername("thinh")
-                .password(bCryptPasswordEncoder().encode("letmein"))
+                .password("letmein")
                 .roles("USER")
                 .build();
         return new InMemoryUserDetailsManager(List.of(junior, hanna));
     }
 
-    /*@Bean
+    @Bean
     public AuthenticationManager authenticationManager(UserDetailsService userDetailsService) {
-        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setUserDetailsService(userDetailsService);
-        return new ProviderManager(daoAuthenticationProvider);
-    }*/
+        MyOwnAuthenticationProvider myOwnAuthenticationProvider = new MyOwnAuthenticationProvider(userDetailsService);
+        return new ProviderManager(myOwnAuthenticationProvider);
+    }
 }
 
 
