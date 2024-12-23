@@ -1,5 +1,7 @@
 package project.brianle.securestorage.service;
 
+import project.brianle.securestorage.dto.response.UserResponse;
+import project.brianle.securestorage.entity.CredentialEntity;
 import project.brianle.securestorage.entity.RoleEntity;
 import project.brianle.securestorage.enumeration.Authority;
 import project.brianle.securestorage.enumeration.LoginType;
@@ -9,4 +11,7 @@ public interface UserService {
     RoleEntity getRoleName(String name);
     void verifyAccount(String key);
     void updateLoginAttempt(String email, LoginType loginType);
+    UserResponse getUserByUserId(String userId);
+    UserResponse getUserByEmail(String email);
+    CredentialEntity getUserCredentialById(Long userId);
 }

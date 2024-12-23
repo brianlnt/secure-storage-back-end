@@ -7,6 +7,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import project.brianle.securestorage.cache.CacheStore;
 import project.brianle.securestorage.domain.RequestContext;
+import project.brianle.securestorage.dto.response.UserResponse;
 import project.brianle.securestorage.entity.ConfirmationEntity;
 import project.brianle.securestorage.entity.CredentialEntity;
 import project.brianle.securestorage.entity.RoleEntity;
@@ -27,6 +28,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static project.brianle.securestorage.utils.UserUtils.createUserEntity;
+import static project.brianle.securestorage.utils.UserUtils.fromUserEntity;
 
 @Service
 @Transactional(rollbackOn = Exception.class)
@@ -91,6 +93,24 @@ public class UserServiceImpl implements UserService {
             }
         }
         userRepository.save(userEntity);
+    }
+
+    @Override
+    public UserResponse getUserByUserId(String userId) {
+        var userEntity = userRepository.findUserByUserId(userId).orElseThrow(() -> new ApiException("User not found"));
+        return fromUserEntity(userEntity, userEntity.getRole(), getUserCredentialById(userEntity.getId()));
+    }
+
+    @Override
+    public UserResponse getUserByEmail(String email) {
+        UserEntity userEntity = getUserEntityByEmail(email);
+        return fromUserEntity(userEntity, userEntity.getRole(), getUserCredentialById(userEntity.getId()));
+    }
+
+    @Override
+    public CredentialEntity getUserCredentialById(Long userId) {
+        var credentialById = credentialRepository.getCredentialByUserEntityId(userId);
+        return credentialById.orElseThrow(() -> new ApiException("Unable to find user credential"));
     }
 
     private UserEntity getUserEntityByEmail(String email){

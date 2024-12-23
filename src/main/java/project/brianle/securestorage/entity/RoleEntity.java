@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.*;
+import project.brianle.securestorage.enumeration.Authority;
 
 @Getter
 @Setter
@@ -16,5 +17,5 @@ import lombok.*;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT) //ensure that default values (like false for boolean) are not included in the database
 public class RoleEntity extends Auditable{
     private String name;
-    private String authorities;
+    private Authority authorities;
 }

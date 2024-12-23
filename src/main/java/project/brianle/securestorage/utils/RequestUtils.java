@@ -1,6 +1,7 @@
 package project.brianle.securestorage.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -35,8 +36,14 @@ public class RequestUtils {
 
     private static final BiConsumer<HttpServletResponse, Response> writeResponse = (httpServletResponse, response) -> {
         try {
-            var outputStream = httpServletResponse.getOutputStream();
+            //ServletOutputStream is used to write a serialized JSON response
+            //to an HttpServletResponse, ensuring that the response is correctly formatted and sent over the network.
+            ServletOutputStream outputStream = httpServletResponse.getOutputStream();
             new ObjectMapper().writeValue(outputStream, response);
+            // outputStream.flush(); is used after writing a JSON response to the ServletOutputStream.
+            // This ensures that all the serialized data is sent to the client as part of the HTTP response.
+            // It's particularly important in web applications to make sure that the response is complete
+            // and reaches the client without any missing parts due to buffering.
             outputStream.flush();
         } catch (Exception exception) {
             throw new ApiException(exception.getMessage());
@@ -60,7 +67,7 @@ public class RequestUtils {
 
     public static void handleErrorResponse(HttpServletRequest request, HttpServletResponse response, Exception exception) {
         if(exception instanceof AccessDeniedException) {
-            var apiResponse = getErrorResponse(request, response, exception, FORBIDDEN);
+            Response apiResponse = getErrorResponse(request, response, exception, FORBIDDEN);
             writeResponse.accept(response, apiResponse);
         }
     }

@@ -1,4 +1,4 @@
-package project.brianle.securestorage.domain;
+package project.brianle.securestorage.security;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;

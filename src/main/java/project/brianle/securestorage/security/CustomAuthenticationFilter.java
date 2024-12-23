@@ -1,4 +1,4 @@
-package project.brianle.securestorage.domain;
+package project.brianle.securestorage.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
@@ -35,10 +35,10 @@ public class CustomAuthenticationFilter extends AbstractAuthenticationProcessing
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
         try {
-            var user = new ObjectMapper().configure(AUTO_CLOSE_SOURCE, true).readValue(request.getInputStream(), LoginRequest.class);
+            LoginRequest user = new ObjectMapper().configure(AUTO_CLOSE_SOURCE, true).readValue(request.getInputStream(), LoginRequest.class);
             userService.updateLoginAttempt(user.getEmail(), LoginType.LOGIN_ATTEMPT);
-            var authentication = CustomAuthenticationToken.unauthenticated(user.getEmail(), user.getPassword());
-            return getAuthenticationManager().authenticate(authentication);
+            CustomAuthenticationToken authentication = CustomAuthenticationToken.unauthenticated(user.getEmail(), user.getPassword());
+            return this.getAuthenticationManager().authenticate(authentication);
         } catch (Exception exception) {
             log.error(exception.getMessage());
             RequestUtils.handleErrorResponse(request, response, exception);

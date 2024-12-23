@@ -14,6 +14,9 @@ public class CacheStore<K, V> {
     public CacheStore(int expiryDuration, TimeUnit timeUnit){
         cache = CacheBuilder.newBuilder()
                 .expireAfterWrite(expiryDuration, timeUnit)
+                // setting the concurrency level to the number of available processors
+                // ensures that the cache can efficiently handle multiple simultaneous login
+                // attempts or updates,
                 .concurrencyLevel(Runtime.getRuntime().availableProcessors())
                 .build();
     }
