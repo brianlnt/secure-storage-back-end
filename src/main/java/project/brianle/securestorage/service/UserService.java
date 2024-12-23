@@ -3,7 +3,6 @@ package project.brianle.securestorage.service;
 import project.brianle.securestorage.dto.response.UserResponse;
 import project.brianle.securestorage.entity.CredentialEntity;
 import project.brianle.securestorage.entity.RoleEntity;
-import project.brianle.securestorage.enumeration.Authority;
 import project.brianle.securestorage.enumeration.LoginType;
 
 public interface UserService {

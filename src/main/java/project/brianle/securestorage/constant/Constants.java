@@ -1,6 +1,7 @@
 package project.brianle.securestorage.constant;
 
 public class Constants {
+    public static final int STRENGTH = 12;
     public static final int NINETY_DAYS = 90;
     public static final String AUTHORITIES = "authorities";
     public static final String GET_ARRAYS_LLC = "GET_ARRAYS_LLC";
