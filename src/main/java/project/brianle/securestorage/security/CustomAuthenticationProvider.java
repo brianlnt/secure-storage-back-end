@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import project.brianle.securestorage.domain.CustomUserDetails;
 import project.brianle.securestorage.dto.response.UserResponse;
 import project.brianle.securestorage.entity.CredentialEntity;
+import project.brianle.securestorage.exceptions.ApiException;
 import project.brianle.securestorage.service.UserService;
 
 import java.util.function.Consumer;
@@ -25,6 +26,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         UserResponse user = userService.getUserByEmail(authenticationToken.getEmail());
 
         CredentialEntity userCredential = userService.getUserCredentialById(user.getId());
+        if(user.isCredentialsNonExpired()) {throw new ApiException("Credentials are expired. Please reset your password");}
         CustomUserDetails customerUserDetails = new CustomUserDetails(user, userCredential);
         validAccount.accept(customerUserDetails);
         if(encoder.matches(authenticationToken.getPassword(), customerUserDetails.getPassword())){
@@ -37,7 +39,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public boolean supports(Class<?> authentication) {
-        return UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication);
+        return CustomAuthenticationToken.class.isAssignableFrom(authentication);
     }
 
     private final Consumer<CustomUserDetails> validAccount = userPrincipal -> {
