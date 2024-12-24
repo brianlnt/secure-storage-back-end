@@ -72,7 +72,7 @@ public class JwtServiceImpl extends JwtConfiguration implements JwtService {
             Jwts.builder()
                     .header().add(Map.of(TYPE, JWT_TYPE))
                     .and()
-                    .audience().add(GET_ARRAYS_LLC)
+                    .audience().add(ISSUER)
                     .and()
                     .id(UUID.randomUUID().toString())
                     .issuedAt(from(now()))

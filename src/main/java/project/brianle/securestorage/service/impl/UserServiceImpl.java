@@ -28,8 +28,8 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 
-import static project.brianle.securestorage.utils.UserUtils.createUserEntity;
-import static project.brianle.securestorage.utils.UserUtils.fromUserEntity;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static project.brianle.securestorage.utils.UserUtils.*;
 
 @Service
 @Transactional(rollbackOn = Exception.class)
@@ -116,12 +116,33 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse setUpMfa(Long id) {
-        return null;
+        var userEntity = getUserEntityById(id);
+        var codeSecret = qrCodeSecret.get();
+        userEntity.setQrCodeImageUri(qrCodeImageUri.apply(userEntity.getEmail(), codeSecret));
+        userEntity.setQrCodeSecret(codeSecret);
+        userEntity.setMfa(true);
+        userRepository.save(userEntity);
+        return fromUserEntity(userEntity, userEntity.getRole(), getUserCredentialById(userEntity.getId()));
     }
 
     @Override
     public UserResponse cancelMfa(Long id) {
-        return null;
+        var userEntity = getUserEntityById(id);
+        userEntity.setMfa(false);
+        userEntity.setQrCodeSecret(EMPTY);
+        userEntity.setQrCodeImageUri(EMPTY);
+        userRepository.save(userEntity);
+        return fromUserEntity(userEntity, userEntity.getRole(), getUserCredentialById(userEntity.getId()));
+    }
+
+    private UserEntity getUserEntityByUserId(String userId) {
+        var userByUserId = userRepository.findUserByUserId(userId);
+        return userByUserId.orElseThrow(() -> new ApiException("User not found"));
+    }
+
+    private UserEntity getUserEntityById(Long id) {
+        var userById = userRepository.findById(id);
+        return userById.orElseThrow(() -> new ApiException("User not found"));
     }
 
     private UserEntity getUserEntityByEmail(String email){
