@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import project.brianle.securestorage.cache.CacheStore;
 import project.brianle.securestorage.domain.RequestContext;
@@ -40,13 +41,13 @@ public class UserServiceImpl implements UserService {
     private final CredentialRepository credentialRepository;
     private final ConfirmationRepository confirmationRepository;
     private final CacheStore<String, Integer> cacheStore;
-//    private final BCriptPasswordEncoder encoder;
+    private final BCryptPasswordEncoder encoder;
     private final ApplicationEventPublisher publisher;
 
     @Override
     public void createUser(String firstName, String lastName, String email, String password) {
         UserEntity userEntity = userRepository.save(createNewUser(firstName, lastName, email));
-        CredentialEntity credentialEntity = new CredentialEntity(password, userEntity);
+        CredentialEntity credentialEntity = new CredentialEntity(encoder.encode(password), userEntity);
         credentialRepository.save(credentialEntity);
         ConfirmationEntity confirmationEntity = new ConfirmationEntity(userEntity);
         confirmationRepository.save(confirmationEntity);
@@ -111,6 +112,16 @@ public class UserServiceImpl implements UserService {
     public CredentialEntity getUserCredentialById(Long userId) {
         var credentialById = credentialRepository.getCredentialByUserEntityId(userId);
         return credentialById.orElseThrow(() -> new ApiException("Unable to find user credential"));
+    }
+
+    @Override
+    public UserResponse setUpMfa(Long id) {
+        return null;
+    }
+
+    @Override
+    public UserResponse cancelMfa(Long id) {
+        return null;
     }
 
     private UserEntity getUserEntityByEmail(String email){

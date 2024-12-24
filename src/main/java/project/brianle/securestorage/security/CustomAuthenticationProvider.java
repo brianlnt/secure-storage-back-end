@@ -26,7 +26,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         UserResponse user = userService.getUserByEmail(authenticationToken.getEmail());
 
         CredentialEntity userCredential = userService.getUserCredentialById(user.getId());
-        if(user.isCredentialsNonExpired()) {throw new ApiException("Credentials are expired. Please reset your password");}
+//        if(!user.isCredentialsNonExpired()) {throw new ApiException("Credentials are expired. Please reset your password");}
         CustomUserDetails customerUserDetails = new CustomUserDetails(user, userCredential);
         validAccount.accept(customerUserDetails);
         if(encoder.matches(authenticationToken.getPassword(), customerUserDetails.getPassword())){

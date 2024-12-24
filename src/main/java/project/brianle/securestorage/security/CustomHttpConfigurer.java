@@ -25,7 +25,9 @@ public class CustomHttpConfigurer extends AbstractHttpConfigurer<CustomHttpConfi
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
+        //This filter likely handles authorization logic, such as checking JWT tokens.
         http.addFilterBefore(customAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
+        //This filter handles authentication logic, such as processing login requests.
         http.addFilterAfter(new CustomAuthenticationFilter(authenticationConfiguration.getAuthenticationManager(), userService, jwtService), UsernamePasswordAuthenticationFilter.class);
     }
 }

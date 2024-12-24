@@ -63,5 +63,5 @@ server:
       enabled: false
 
 jwt:
-  expiration: ${JWT_EXPIRATION}
+  expiration: 432_000_000
   secret: ${JWT_SECRET}
