@@ -24,4 +24,6 @@ public interface UserService {
     UserResponse verifyPassword(String key);
 
     void updateResetPassword(String userId, String newPassword, String confirmNewPassword);
+
+    UserResponse updateUser(String userId, String firstName, String lastName, String email, String phone, String bio);
 }

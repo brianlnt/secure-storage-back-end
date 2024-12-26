@@ -74,10 +74,16 @@ public class UserController {
     }
 
     //user info with login
-    @PostMapping("/profile")
+    @GetMapping("/profile")
     public ResponseEntity<Response> profile(@AuthenticationPrincipal UserResponse userPrinciple,  HttpServletRequest request){
         var user = userService.getUserByUserId(userPrinciple.getUserId());
         return ResponseEntity.ok().body(getResponse(request, of("user", user), "Profile retrieved", OK));
+    }
+
+    @PatchMapping("/update")
+    public ResponseEntity<Response> update(@AuthenticationPrincipal UserResponse userPrinciple, @RequestBody UserRequest userRequest, HttpServletRequest request){
+        var user = userService.updateUser(userPrinciple.getUserId(), userRequest.getFirstName(), userRequest.getLastName(), userRequest.getEmail(), userRequest.getPhone(), userRequest.getBio());
+        return ResponseEntity.ok().body(getResponse(request, of("user", user), "User updated successfully", OK));
     }
 
     //reset password without login

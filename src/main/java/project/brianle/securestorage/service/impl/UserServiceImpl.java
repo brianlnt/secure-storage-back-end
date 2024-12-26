@@ -180,6 +180,18 @@ public class UserServiceImpl implements UserService {
         credentialRepository.save(credentialEntity);
     }
 
+    @Override
+    public UserResponse updateUser(String userId, String firstName, String lastName, String email, String phone, String bio) {
+        UserEntity userEntity = getUserEntityByUserId(userId);
+        userEntity.setFirstName(firstName);
+        userEntity.setLastName(lastName);
+        userEntity.setEmail(email);
+        userEntity.setPhone(phone);
+        userEntity.setBio(bio);
+        userRepository.save(userEntity);
+        return fromUserEntity(userEntity, userEntity.getRole(), getUserCredentialById(userEntity.getId()));
+    }
+
     private ConfirmationEntity getUserConfirmation(UserEntity user) {
         return confirmationRepository.findByUserEntity(user).orElse(null);
     }
