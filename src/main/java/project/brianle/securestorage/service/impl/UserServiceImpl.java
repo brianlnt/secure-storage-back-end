@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import project.brianle.securestorage.cache.CacheStore;
 import project.brianle.securestorage.domain.RequestContext;
 import project.brianle.securestorage.dto.response.UserResponse;
@@ -33,10 +35,14 @@ import project.brianle.securestorage.service.UserService;
 import project.brianle.securestorage.utils.AccountUtils;
 import project.brianle.securestorage.utils.UserUtils;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiFunction;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static project.brianle.securestorage.utils.UserUtils.*;
 
@@ -227,6 +233,29 @@ public class UserServiceImpl implements UserService {
         credentialEntity.setPassword(encoder.encode(newPassword));
         credentialRepository.save(credentialEntity);
     }
+
+    @Override
+    public String uploadPhoto(String userId, MultipartFile file) {
+        UserEntity userEntity = getUserEntityByUserId(userId);
+        String photoUrl = photoFunction.apply(userId, file);
+        userEntity.setImageUrl(photoUrl);
+        userRepository.save(userEntity);
+        return photoUrl;
+    }
+
+    public static BiFunction<String, MultipartFile, String> photoFunction = (id, file) -> {
+        var filename = id + ".png";
+        try {
+            var fileStorageLocation = Paths.get(System.getProperty("user.home") + "/Downloads/uploads").toAbsolutePath().normalize();
+            if(!Files.exists(fileStorageLocation)) {Files.createDirectories(fileStorageLocation);}
+            Files.copy(file.getInputStream(), fileStorageLocation.resolve(filename), REPLACE_EXISTING);
+            return ServletUriComponentsBuilder
+                    .fromCurrentContextPath()
+                    .path("/user/image/" + filename).toUriString();
+        } catch (Exception exception) {
+            throw new ApiException("Unable to save image");
+        }
+    };
 
     private ConfirmationEntity getUserConfirmation(UserEntity user) {
         return confirmationRepository.findByUserEntity(user).orElse(null);

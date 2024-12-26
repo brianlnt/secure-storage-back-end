@@ -1,5 +1,6 @@
 package project.brianle.securestorage.service;
 
+import org.springframework.web.multipart.MultipartFile;
 import project.brianle.securestorage.dto.response.UserResponse;
 import project.brianle.securestorage.entity.CredentialEntity;
 import project.brianle.securestorage.entity.RoleEntity;
@@ -33,4 +34,6 @@ public interface UserService {
     void setAccountInfo(String userId, AccountInfoProperties accountInfoProperties);
 
     void updatePassword(String userId, String currentPassword, String newPassword, String confirmNewPassword);
+
+    String uploadPhoto(String userId, MultipartFile file);
 }

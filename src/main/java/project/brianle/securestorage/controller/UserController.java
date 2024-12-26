@@ -11,6 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import project.brianle.securestorage.domain.Response;
 import project.brianle.securestorage.dto.request.*;
 import project.brianle.securestorage.dto.response.UserResponse;
@@ -23,6 +24,7 @@ import project.brianle.securestorage.service.UserService;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import static java.util.Collections.emptyMap;
 import static java.util.Map.of;
@@ -137,6 +139,12 @@ public class UserController {
     public ResponseEntity<Response> resetNewPassword(@RequestBody @Valid ResetPasswordRequest resetPasswordRequest, HttpServletRequest request){
         userService.updateResetPassword(resetPasswordRequest.getUserId(), resetPasswordRequest.getNewPassword(), resetPasswordRequest.getConfirmNewPassword());
         return ResponseEntity.ok().body(getResponse(request, emptyMap(), "Password reset successfully", HttpStatus.OK));
+    }
+
+    @PatchMapping("/photo")
+    public ResponseEntity<Response> uploadPhoto(@AuthenticationPrincipal UserResponse userPrinciple, @RequestParam("file") MultipartFile file, HttpServletRequest request){
+        var imageUrl = userService.uploadPhoto(userPrinciple.getUserId(), file);
+        return ResponseEntity.ok().body(getResponse(request, of("imageUrl", imageUrl), "Photo uploaded successfully", OK));
     }
 
     private URI getUri() {
