@@ -176,7 +176,7 @@ public class UserServiceImpl implements UserService {
         if(!newPassword.equals(confirmNewPassword)) throw new ApiException("Passwords don't match. Please try again.");
         UserEntity userEntity = getUserEntityByUserId(userId);
         CredentialEntity credentialEntity = getUserCredentialById(userEntity.getId());
-        credentialEntity.setPassword(newPassword);
+        credentialEntity.setPassword(encoder.encode(newPassword));
         credentialRepository.save(credentialEntity);
     }
 

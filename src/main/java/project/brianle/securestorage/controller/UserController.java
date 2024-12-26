@@ -17,6 +17,7 @@ import project.brianle.securestorage.dto.request.QrCodeRequest;
 import project.brianle.securestorage.dto.request.ResetPasswordRequest;
 import project.brianle.securestorage.dto.request.UserRequest;
 import project.brianle.securestorage.dto.response.UserResponse;
+import project.brianle.securestorage.repository.UserRepository;
 import project.brianle.securestorage.security.CustomAuthenticationFilter;
 import project.brianle.securestorage.security.CustomAuthenticationToken;
 import project.brianle.securestorage.service.JwtService;
@@ -38,6 +39,7 @@ import static project.brianle.securestorage.utils.RequestUtils.getResponse;
 public class UserController {
     private final UserService userService;
     private final JwtService jwtService;
+    private final UserRepository userRepository;
 
     @PostMapping("/register")
     public ResponseEntity<Response> saveUser(@RequestBody @Valid UserRequest user, HttpServletRequest request){
@@ -71,6 +73,14 @@ public class UserController {
         return ResponseEntity.ok().body(getResponse(request, of("user", user), "QR code verified", OK));
     }
 
+    //user info with login
+    @PostMapping("/profile")
+    public ResponseEntity<Response> profile(@AuthenticationPrincipal UserResponse userPrinciple,  HttpServletRequest request){
+        var user = userService.getUserByUserId(userPrinciple.getUserId());
+        return ResponseEntity.ok().body(getResponse(request, of("user", user), "Profile retrieved", OK));
+    }
+
+    //reset password without login
     @PostMapping("/resetpassword")
     public ResponseEntity<Response> resetPasswordRequest(@RequestBody EmailRequest emailRequest, HttpServletRequest request){
         userService.resetPassword(emailRequest.getEmail());
