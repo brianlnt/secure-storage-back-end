@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import project.brianle.securestorage.domain.Response;
 import project.brianle.securestorage.dto.request.*;
 import project.brianle.securestorage.dto.response.UserResponse;
+import project.brianle.securestorage.enumeration.AccountInfoProperties;
 import project.brianle.securestorage.repository.UserRepository;
 import project.brianle.securestorage.security.CustomAuthenticationFilter;
 import project.brianle.securestorage.security.CustomAuthenticationToken;
@@ -87,6 +88,30 @@ public class UserController {
     public ResponseEntity<Response> updateRole(@AuthenticationPrincipal UserResponse userPrinciple, @RequestBody RoleRequest roleRequest, HttpServletRequest request){
         userService.updateRole(userPrinciple.getUserId(), roleRequest.getRole());
         return ResponseEntity.ok().body(getResponse(request, emptyMap(), "User role updated successfully", OK));
+    }
+
+    @PatchMapping("/setaccountexpired")
+    public ResponseEntity<Response> setAccountExpired(@AuthenticationPrincipal UserResponse userPrinciple, HttpServletRequest request){
+        userService.setAccountInfo(userPrinciple.getUserId(), AccountInfoProperties.EXPIRED);
+        return ResponseEntity.ok().body(getResponse(request, emptyMap(), "Account updated successfully", OK));
+    }
+
+    @PatchMapping("/setaccountlocked")
+    public ResponseEntity<Response> setAccountLocked(@AuthenticationPrincipal UserResponse userPrinciple, HttpServletRequest request){
+        userService.setAccountInfo(userPrinciple.getUserId(), AccountInfoProperties.LOCKED);
+        return ResponseEntity.ok().body(getResponse(request, emptyMap(), "Account updated successfully", OK));
+    }
+
+    @PatchMapping("/setaccountenabled")
+    public ResponseEntity<Response> setAccountEnabled(@AuthenticationPrincipal UserResponse userPrinciple, HttpServletRequest request){
+        userService.setAccountInfo(userPrinciple.getUserId(), AccountInfoProperties.ENABLED);
+        return ResponseEntity.ok().body(getResponse(request, emptyMap(), "Account updated successfully", OK));
+    }
+
+    @PatchMapping("/setcredentialexpired")
+    public ResponseEntity<Response> setCredentialExpired(@AuthenticationPrincipal UserResponse userPrinciple, HttpServletRequest request){
+        userService.setAccountInfo(userPrinciple.getUserId(), AccountInfoProperties.CREDENTIAL_EXPIRED);
+        return ResponseEntity.ok().body(getResponse(request, emptyMap(), "Account updated successfully", OK));
     }
 
     //reset password without login

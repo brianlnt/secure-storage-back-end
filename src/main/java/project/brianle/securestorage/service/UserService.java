@@ -3,6 +3,7 @@ package project.brianle.securestorage.service;
 import project.brianle.securestorage.dto.response.UserResponse;
 import project.brianle.securestorage.entity.CredentialEntity;
 import project.brianle.securestorage.entity.RoleEntity;
+import project.brianle.securestorage.enumeration.AccountInfoProperties;
 import project.brianle.securestorage.enumeration.LoginType;
 
 public interface UserService {
@@ -28,4 +29,6 @@ public interface UserService {
     UserResponse updateUser(String userId, String firstName, String lastName, String email, String phone, String bio);
 
     void updateRole(String userId, String role);
+
+    void setAccountInfo(String userId, AccountInfoProperties accountInfoProperties);
 }

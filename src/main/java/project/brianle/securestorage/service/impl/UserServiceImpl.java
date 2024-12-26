@@ -19,6 +19,7 @@ import project.brianle.securestorage.entity.ConfirmationEntity;
 import project.brianle.securestorage.entity.CredentialEntity;
 import project.brianle.securestorage.entity.RoleEntity;
 import project.brianle.securestorage.entity.UserEntity;
+import project.brianle.securestorage.enumeration.AccountInfoProperties;
 import project.brianle.securestorage.enumeration.Authority;
 import project.brianle.securestorage.enumeration.EventType;
 import project.brianle.securestorage.enumeration.LoginType;
@@ -197,6 +198,22 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = getUserEntityByUserId(userId);
         userEntity.setRole(getRoleName(role));
         userRepository.save(userEntity);
+    }
+
+    @Override
+    public void setAccountInfo(String userId, AccountInfoProperties accountInfoProperties) {
+        UserEntity userEntity= getUserEntityByUserId(userId);
+        switch (accountInfoProperties){
+            case EXPIRED -> userEntity.setAccountNonExpired(!userEntity.isAccountNonExpired());
+            case LOCKED -> userEntity.setAccountNonLocked(!userEntity.isAccountNonLocked());
+            case ENABLED -> userEntity.setEnabled(!userEntity.isEnabled());
+            case CREDENTIAL_EXPIRED -> {
+                CredentialEntity credential = getUserCredentialById(userEntity.getId());
+                credential.setUpdatedAt(LocalDateTime.of(1999,1,1,12,0));
+                credentialRepository.save(credential);
+            }
+            default -> {}
+        }
     }
 
     private ConfirmationEntity getUserConfirmation(UserEntity user) {
