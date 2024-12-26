@@ -12,10 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import project.brianle.securestorage.domain.Response;
-import project.brianle.securestorage.dto.request.EmailRequest;
-import project.brianle.securestorage.dto.request.QrCodeRequest;
-import project.brianle.securestorage.dto.request.ResetPasswordRequest;
-import project.brianle.securestorage.dto.request.UserRequest;
+import project.brianle.securestorage.dto.request.*;
 import project.brianle.securestorage.dto.response.UserResponse;
 import project.brianle.securestorage.repository.UserRepository;
 import project.brianle.securestorage.security.CustomAuthenticationFilter;
@@ -84,6 +81,12 @@ public class UserController {
     public ResponseEntity<Response> update(@AuthenticationPrincipal UserResponse userPrinciple, @RequestBody UserRequest userRequest, HttpServletRequest request){
         var user = userService.updateUser(userPrinciple.getUserId(), userRequest.getFirstName(), userRequest.getLastName(), userRequest.getEmail(), userRequest.getPhone(), userRequest.getBio());
         return ResponseEntity.ok().body(getResponse(request, of("user", user), "User updated successfully", OK));
+    }
+
+    @PatchMapping("/updaterole")
+    public ResponseEntity<Response> updateRole(@AuthenticationPrincipal UserResponse userPrinciple, @RequestBody RoleRequest roleRequest, HttpServletRequest request){
+        userService.updateRole(userPrinciple.getUserId(), roleRequest.getRole());
+        return ResponseEntity.ok().body(getResponse(request, emptyMap(), "User role updated successfully", OK));
     }
 
     //reset password without login

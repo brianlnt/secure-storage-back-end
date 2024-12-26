@@ -26,4 +26,6 @@ public interface UserService {
     void updateResetPassword(String userId, String newPassword, String confirmNewPassword);
 
     UserResponse updateUser(String userId, String firstName, String lastName, String email, String phone, String bio);
+
+    void updateRole(String userId, String role);
 }
