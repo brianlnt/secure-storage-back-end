@@ -31,6 +31,7 @@ import project.brianle.securestorage.repository.RoleRepository;
 import project.brianle.securestorage.repository.UserRepository;
 import project.brianle.securestorage.service.UserService;
 import project.brianle.securestorage.utils.AccountUtils;
+import project.brianle.securestorage.utils.UserUtils;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -214,6 +215,17 @@ public class UserServiceImpl implements UserService {
             }
             default -> {}
         }
+    }
+
+    @Override
+    public void updatePassword(String userId, String currentPassword, String newPassword, String confirmNewPassword) {
+        if(!newPassword.equals(confirmNewPassword)) throw new ApiException("Password don't match. Please try again.");
+        UserEntity userEntity = getUserEntityByUserId(userId);
+        AccountUtils.verifyAccountStatus(userEntity);
+        CredentialEntity credentialEntity = getUserCredentialById(userEntity.getId());
+        if(!encoder.matches(currentPassword, credentialEntity.getPassword())) throw new ApiException("Existing password is incorrect. Please try again.");
+        credentialEntity.setPassword(encoder.encode(newPassword));
+        credentialRepository.save(credentialEntity);
     }
 
     private ConfirmationEntity getUserConfirmation(UserEntity user) {

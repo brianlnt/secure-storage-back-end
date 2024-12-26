@@ -31,4 +31,6 @@ public interface UserService {
     void updateRole(String userId, String role);
 
     void setAccountInfo(String userId, AccountInfoProperties accountInfoProperties);
+
+    void updatePassword(String userId, String currentPassword, String newPassword, String confirmNewPassword);
 }

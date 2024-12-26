@@ -8,9 +8,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ResetPasswordRequest {
-    @NotEmpty(message = "User ID cannot be empty or null")
-    private String userId;
+public class UpdatePasswordRequest {
+    @NotEmpty(message = "Current Password cannot be empty or null")
+    private String currentPassword;
     @NotEmpty(message = "New Password cannot be empty or null")
     private String newPassword;
     @NotEmpty(message = "Confirm Password cannot be empty or null")

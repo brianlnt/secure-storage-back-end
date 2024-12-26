@@ -114,6 +114,12 @@ public class UserController {
         return ResponseEntity.ok().body(getResponse(request, emptyMap(), "Account updated successfully", OK));
     }
 
+    @PatchMapping("/updatepassword")
+    public ResponseEntity<Response> updatePassword(@AuthenticationPrincipal UserResponse userPrinciple, @RequestBody UpdatePasswordRequest updatePasswordRequest, HttpServletRequest request){
+        userService.updatePassword(userPrinciple.getUserId(), updatePasswordRequest.getCurrentPassword(), updatePasswordRequest.getNewPassword(), updatePasswordRequest.getConfirmNewPassword());
+        return ResponseEntity.ok().body(getResponse(request, emptyMap(), "Password updated successfully", OK));
+    }
+
     //reset password without login
     @PostMapping("/resetpassword")
     public ResponseEntity<Response> resetPasswordRequest(@RequestBody EmailRequest emailRequest, HttpServletRequest request){
