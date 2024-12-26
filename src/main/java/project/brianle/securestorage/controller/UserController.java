@@ -22,13 +22,19 @@ import project.brianle.securestorage.security.CustomAuthenticationToken;
 import project.brianle.securestorage.service.JwtService;
 import project.brianle.securestorage.service.UserService;
 
+import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.ResourceBundle;
 
 import static java.util.Collections.emptyMap;
 import static java.util.Map.of;
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
+import static org.springframework.http.MediaType.IMAGE_PNG_VALUE;
+import static project.brianle.securestorage.constant.Constants.PHOTO_DIRECTORY;
 import static project.brianle.securestorage.enumeration.TokenType.ACCESS;
 import static project.brianle.securestorage.enumeration.TokenType.REFRESH;
 import static project.brianle.securestorage.utils.RequestUtils.getResponse;
@@ -145,6 +151,11 @@ public class UserController {
     public ResponseEntity<Response> uploadPhoto(@AuthenticationPrincipal UserResponse userPrinciple, @RequestParam("file") MultipartFile file, HttpServletRequest request){
         var imageUrl = userService.uploadPhoto(userPrinciple.getUserId(), file);
         return ResponseEntity.ok().body(getResponse(request, of("imageUrl", imageUrl), "Photo uploaded successfully", OK));
+    }
+
+    @GetMapping(path = "/image/{filename}", produces = { IMAGE_PNG_VALUE, IMAGE_JPEG_VALUE })
+    public byte[] getPhoto(@PathVariable("filename") String filename) throws IOException{
+        return Files.readAllBytes(Paths.get(PHOTO_DIRECTORY + filename));
     }
 
     private URI getUri() {

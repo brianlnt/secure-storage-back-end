@@ -44,6 +44,7 @@ import java.util.function.BiFunction;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static project.brianle.securestorage.constant.Constants.PHOTO_DIRECTORY;
 import static project.brianle.securestorage.utils.UserUtils.*;
 
 @Service
@@ -246,7 +247,7 @@ public class UserServiceImpl implements UserService {
     public static BiFunction<String, MultipartFile, String> photoFunction = (id, file) -> {
         var filename = id + ".png";
         try {
-            var fileStorageLocation = Paths.get(System.getProperty("user.home") + "/Downloads/uploads").toAbsolutePath().normalize();
+            var fileStorageLocation = Paths.get(PHOTO_DIRECTORY).toAbsolutePath().normalize();
             if(!Files.exists(fileStorageLocation)) {Files.createDirectories(fileStorageLocation);}
             Files.copy(file.getInputStream(), fileStorageLocation.resolve(filename), REPLACE_EXISTING);
             return ServletUriComponentsBuilder
