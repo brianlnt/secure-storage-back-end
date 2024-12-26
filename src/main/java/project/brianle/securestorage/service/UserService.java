@@ -18,4 +18,10 @@ public interface UserService {
     UserResponse cancelMfa(Long id);
 
     UserResponse verifyQrCode(String userId, String qrCode);
+
+    void resetPassword(String email);
+
+    UserResponse verifyPassword(String key);
+
+    void updateResetPassword(String userId, String newPassword, String confirmNewPassword);
 }

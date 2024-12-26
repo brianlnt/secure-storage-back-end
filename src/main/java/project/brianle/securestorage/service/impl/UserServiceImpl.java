@@ -29,6 +29,7 @@ import project.brianle.securestorage.repository.CredentialRepository;
 import project.brianle.securestorage.repository.RoleRepository;
 import project.brianle.securestorage.repository.UserRepository;
 import project.brianle.securestorage.service.UserService;
+import project.brianle.securestorage.utils.AccountUtils;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -146,6 +147,45 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = getUserEntityByUserId(userId);
         verifyCode(qrCode, userEntity.getQrCodeSecret());
         return fromUserEntity(userEntity, userEntity.getRole(), getUserCredentialById(userEntity.getId()));
+    }
+
+    @Override
+    public void resetPassword(String email) {
+        UserEntity user = getUserEntityByEmail(email);
+        ConfirmationEntity confirmationEntity = getUserConfirmation(user);
+        if(confirmationEntity != null) {
+            publisher.publishEvent(new UserEvent(user, EventType.RESETPASSWORD, Map.of("key", confirmationEntity.getKey())));
+        } else {
+            ConfirmationEntity newConfirmationEntity = new ConfirmationEntity(user);
+            confirmationRepository.save(newConfirmationEntity);
+            publisher.publishEvent(new UserEvent(user, EventType.RESETPASSWORD, Map.of("key", newConfirmationEntity.getKey())));
+        }
+    }
+
+    @Override
+    public UserResponse verifyPassword(String key) {
+        ConfirmationEntity confirmationEntity = getUserConfirmation(key);
+        UserEntity userEntity = confirmationEntity.getUserEntity();
+        AccountUtils.verifyAccountStatus(userEntity);
+        confirmationRepository.delete(confirmationEntity);
+        return fromUserEntity(userEntity, userEntity.getRole(), getUserCredentialById(userEntity.getId()));
+    }
+
+    @Override
+    public void updateResetPassword(String userId, String newPassword, String confirmNewPassword) {
+        if(!newPassword.equals(confirmNewPassword)) throw new ApiException("Passwords don't match. Please try again.");
+        UserEntity userEntity = getUserEntityByUserId(userId);
+        CredentialEntity credentialEntity = getUserCredentialById(userEntity.getId());
+        credentialEntity.setPassword(newPassword);
+        credentialRepository.save(credentialEntity);
+    }
+
+    private ConfirmationEntity getUserConfirmation(UserEntity user) {
+        return confirmationRepository.findByUserEntity(user).orElse(null);
+    }
+
+    private ConfirmationEntity getUserConfirmation(String key) {
+        return confirmationRepository.findByKey(key).orElseThrow(() -> new ApiException("Unable to find the key"));
     }
 
     private boolean verifyCode(String qrCode, String qrCodeSecret) {

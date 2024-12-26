@@ -12,7 +12,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import project.brianle.securestorage.domain.Response;
+import project.brianle.securestorage.dto.request.EmailRequest;
 import project.brianle.securestorage.dto.request.QrCodeRequest;
+import project.brianle.securestorage.dto.request.ResetPasswordRequest;
 import project.brianle.securestorage.dto.request.UserRequest;
 import project.brianle.securestorage.dto.response.UserResponse;
 import project.brianle.securestorage.security.CustomAuthenticationFilter;
@@ -67,6 +69,24 @@ public class UserController {
         jwtService.addCookie(response, user, ACCESS);
         jwtService.addCookie(response, user, REFRESH);
         return ResponseEntity.ok().body(getResponse(request, of("user", user), "QR code verified", OK));
+    }
+
+    @PostMapping("/resetpassword")
+    public ResponseEntity<Response> resetPasswordRequest(@RequestBody EmailRequest emailRequest, HttpServletRequest request){
+        userService.resetPassword(emailRequest.getEmail());
+        return ResponseEntity.ok().body(getResponse(request, emptyMap(), "We sent an email to reset your password, please check.", HttpStatus.OK));
+    }
+
+    @GetMapping("/verify/password")
+    public ResponseEntity<Response> verifyPassword(@RequestParam("key") String key, HttpServletRequest request){
+        UserResponse user = userService.verifyPassword(key);
+        return ResponseEntity.ok().body(getResponse(request, Map.of("user", user), "Enter new password", HttpStatus.OK));
+    }
+
+    @PostMapping("/resetpassword/reset")
+    public ResponseEntity<Response> resetNewPassword(@RequestBody @Valid ResetPasswordRequest resetPasswordRequest, HttpServletRequest request){
+        userService.updateResetPassword(resetPasswordRequest.getUserId(), resetPasswordRequest.getNewPassword(), resetPasswordRequest.getConfirmNewPassword());
+        return ResponseEntity.ok().body(getResponse(request, emptyMap(), "Password reset successfully", HttpStatus.OK));
     }
 
     private URI getUri() {
