@@ -1,5 +1,11 @@
 package project.brianle.securestorage.service.impl;
 
+import dev.samstevens.totp.code.CodeGenerator;
+import dev.samstevens.totp.code.CodeVerifier;
+import dev.samstevens.totp.code.DefaultCodeGenerator;
+import dev.samstevens.totp.code.DefaultCodeVerifier;
+import dev.samstevens.totp.time.SystemTimeProvider;
+import dev.samstevens.totp.time.TimeProvider;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -133,6 +139,24 @@ public class UserServiceImpl implements UserService {
         userEntity.setQrCodeImageUri(EMPTY);
         userRepository.save(userEntity);
         return fromUserEntity(userEntity, userEntity.getRole(), getUserCredentialById(userEntity.getId()));
+    }
+
+    @Override
+    public UserResponse verifyQrCode(String userId, String qrCode) {
+        UserEntity userEntity = getUserEntityByUserId(userId);
+        verifyCode(qrCode, userEntity.getQrCodeSecret());
+        return fromUserEntity(userEntity, userEntity.getRole(), getUserCredentialById(userEntity.getId()));
+    }
+
+    private boolean verifyCode(String qrCode, String qrCodeSecret) {
+        TimeProvider timeProvider = new SystemTimeProvider();
+        CodeGenerator codeGenerator = new DefaultCodeGenerator();
+        CodeVerifier codeVerifier = new DefaultCodeVerifier(codeGenerator, timeProvider);
+        if(codeVerifier.isValidCode(qrCodeSecret, qrCode)) {
+            return true;
+        } else {
+            throw new ApiException("Invalid QR code. Please try again.");
+        }
     }
 
     private UserEntity getUserEntityByUserId(String userId) {

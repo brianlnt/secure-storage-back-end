@@ -50,6 +50,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                     SecurityContextHolder.clearContext();
                 }
             }
+            filterChain.doFilter(request, response);
         } catch (Exception exception){
             log.info(exception.getMessage());
             RequestUtils.handleErrorResponse(request,response,exception);

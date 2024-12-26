@@ -1,6 +1,7 @@
 package project.brianle.securestorage.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import project.brianle.securestorage.domain.Response;
+import project.brianle.securestorage.dto.request.QrCodeRequest;
 import project.brianle.securestorage.dto.request.UserRequest;
 import project.brianle.securestorage.dto.response.UserResponse;
 import project.brianle.securestorage.security.CustomAuthenticationFilter;
@@ -24,6 +26,8 @@ import java.util.Map;
 import static java.util.Collections.emptyMap;
 import static java.util.Map.of;
 import static org.springframework.http.HttpStatus.OK;
+import static project.brianle.securestorage.enumeration.TokenType.ACCESS;
+import static project.brianle.securestorage.enumeration.TokenType.REFRESH;
 import static project.brianle.securestorage.utils.RequestUtils.getResponse;
 
 @RestController
@@ -55,6 +59,14 @@ public class UserController {
     public ResponseEntity<Response> cancelMfa(@AuthenticationPrincipal UserResponse userPrincipal, HttpServletRequest request) {
         UserResponse user = userService.cancelMfa(userPrincipal.getId());
         return ResponseEntity.ok().body(getResponse(request, of("user", user), "MFA canceled successfully", OK));
+    }
+
+    @PostMapping("/verify/qrcode")
+    public ResponseEntity<Response> verifyQrcode(@RequestBody QrCodeRequest qrCodeRequest, HttpServletRequest request, HttpServletResponse response) {
+        var user = userService.verifyQrCode(qrCodeRequest.getUserId(), qrCodeRequest.getQrCode());
+        jwtService.addCookie(response, user, ACCESS);
+        jwtService.addCookie(response, user, REFRESH);
+        return ResponseEntity.ok().body(getResponse(request, of("user", user), "QR code verified", OK));
     }
 
     private URI getUri() {
