@@ -3,6 +3,7 @@ package project.brianle.securestorage.service.impl;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -108,6 +109,12 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public Resource getResource(String documentName) {
-        return null;
+        try {
+            var file = Paths.get(FILE_STORAGE).toAbsolutePath().normalize().resolve(documentName);
+            if(!Files.exists(file)) throw new ApiException("Document not found");
+            return new UrlResource(file.toUri());
+        } catch (Exception exception) {
+            throw new ApiException("Unable to download document");
+        }
     }
 }

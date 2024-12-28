@@ -2,7 +2,10 @@ package project.brianle.securestorage.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +15,9 @@ import project.brianle.securestorage.dto.request.UpdateDocumentRequest;
 import project.brianle.securestorage.dto.response.UserResponse;
 import project.brianle.securestorage.service.DocumentService;
 
+import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 
@@ -57,5 +62,15 @@ public class DocumentController {
     public ResponseEntity<Response> updateDocument(@AuthenticationPrincipal UserResponse user, @RequestBody UpdateDocumentRequest updateDocumentRequest, HttpServletRequest request){
         var updateDocument = documentService.updateDocument(updateDocumentRequest.getDocumentId(), updateDocumentRequest.getName(), updateDocumentRequest.getDescription());
         return ResponseEntity.ok().body(getResponse(request, Map.of("documents", updateDocument), "Document updated successfully.", HttpStatus.OK));
+    }
+
+    @GetMapping("/download/{documentName}")
+    public ResponseEntity<Resource> downloadDocument(@AuthenticationPrincipal UserResponse user, @PathVariable("documentName") String documentName) throws IOException {
+        var resource = documentService.getResource(documentName);
+        var httpHeaders = new HttpHeaders();
+        httpHeaders.add("File-Name", documentName);
+        httpHeaders.add(HttpHeaders.CONTENT_DISPOSITION, "attachment;File-Name=" + resource.getFilename());
+        return ResponseEntity.ok().contentType(MediaType.parseMediaType(Files.probeContentType(resource.getFile().toPath())))
+                .headers(httpHeaders).body(resource);
     }
 }
