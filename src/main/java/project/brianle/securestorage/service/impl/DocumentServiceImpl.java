@@ -18,7 +18,6 @@ import project.brianle.securestorage.repository.UserRepository;
 import project.brianle.securestorage.service.DocumentService;
 import project.brianle.securestorage.service.UserService;
 
-import java.awt.print.Pageable;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -80,7 +79,21 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public IDocument updateDocument(String documentId, String name, String description) {
-        return null;
+        try {
+            var documentEntity = getDocumentEntity(documentId);
+            var document = Paths.get(FILE_STORAGE).resolve(documentEntity.getName()).toAbsolutePath().normalize();
+            Files.move(document, document.resolveSibling(name), REPLACE_EXISTING);
+            documentEntity.setName(name);
+            documentEntity.setDescription(description);
+            documentRepository.save(documentEntity);
+            return getDocumentByDocumentId(documentId);
+        } catch (Exception exception) {
+            throw new ApiException("Unable to update document");
+        }
+    }
+
+    private DocumentEntity getDocumentEntity(String documentId) {
+        return documentRepository.findByDocumentId(documentId).orElseThrow(() -> new ApiException("Document not found"));
     }
 
     @Override
