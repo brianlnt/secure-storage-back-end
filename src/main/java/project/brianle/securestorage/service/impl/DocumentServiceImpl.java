@@ -13,7 +13,7 @@ import project.brianle.securestorage.dto.IDocument;
 import project.brianle.securestorage.dto.response.DocumentResponse;
 import project.brianle.securestorage.entity.DocumentEntity;
 import project.brianle.securestorage.entity.UserEntity;
-import project.brianle.securestorage.exceptions.ApiException;
+import project.brianle.securestorage.exceptions.CustomException;
 import project.brianle.securestorage.repository.DocumentRepository;
 import project.brianle.securestorage.repository.UserRepository;
 import project.brianle.securestorage.service.DocumentService;
@@ -56,7 +56,7 @@ public class DocumentServiceImpl implements DocumentService {
         try {
             for(MultipartFile document : documents) {
                 var filename = cleanPath(Objects.requireNonNull(document.getOriginalFilename()));
-                if("..".contains(filename)) throw new ApiException(String.format("Invalid file name: %s", filename));
+                if("..".contains(filename)) throw new CustomException(String.format("Invalid file name: %s", filename));
                 var documentEntity = DocumentEntity
                         .builder()
                         .documentId(UUID.randomUUID().toString())
@@ -74,7 +74,7 @@ public class DocumentServiceImpl implements DocumentService {
             }
             return documentResponses;
         } catch (Exception exception) {
-            throw new ApiException("Unable to save documents");
+            throw new CustomException("Unable to save documents");
         }
     }
 
@@ -89,12 +89,12 @@ public class DocumentServiceImpl implements DocumentService {
             documentRepository.save(documentEntity);
             return getDocumentByDocumentId(documentId);
         } catch (Exception exception) {
-            throw new ApiException("Unable to update document");
+            throw new CustomException("Unable to update document");
         }
     }
 
     private DocumentEntity getDocumentEntity(String documentId) {
-        return documentRepository.findByDocumentId(documentId).orElseThrow(() -> new ApiException("Document not found"));
+        return documentRepository.findByDocumentId(documentId).orElseThrow(() -> new CustomException("Document not found"));
     }
 
     @Override
@@ -104,17 +104,17 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public IDocument getDocumentByDocumentId(String documentId) {
-        return documentRepository.findDocumentByDocumentId(documentId).orElseThrow(() -> new ApiException("Document not found"));
+        return documentRepository.findDocumentByDocumentId(documentId).orElseThrow(() -> new CustomException("Document not found"));
     }
 
     @Override
     public Resource getResource(String documentName) {
         try {
             var file = Paths.get(FILE_STORAGE).toAbsolutePath().normalize().resolve(documentName);
-            if(!Files.exists(file)) throw new ApiException("Document not found");
+            if(!Files.exists(file)) throw new CustomException("Document not found");
             return new UrlResource(file.toUri());
         } catch (Exception exception) {
-            throw new ApiException("Unable to download document");
+            throw new CustomException("Unable to download document");
         }
     }
 }

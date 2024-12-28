@@ -1,13 +1,12 @@
 package project.brianle.securestorage.utils;
 
-import org.springframework.util.AutoPopulatingList;
 import project.brianle.securestorage.entity.UserEntity;
-import project.brianle.securestorage.exceptions.ApiException;
+import project.brianle.securestorage.exceptions.CustomException;
 
 public class AccountUtils {
     public static void verifyAccountStatus(UserEntity userEntity){
-        if(!userEntity.isEnabled()) throw new ApiException("Account is disabled");
-        if(!userEntity.isAccountNonExpired()) throw new ApiException("Account is expired");
-        if(!userEntity.isAccountNonLocked()) throw new ApiException("Account is locked");
+        if(!userEntity.isEnabled()) throw new CustomException("Account is disabled");
+        if(!userEntity.isAccountNonExpired()) throw new CustomException("Account is expired");
+        if(!userEntity.isAccountNonLocked()) throw new CustomException("Account is locked");
     }
 }

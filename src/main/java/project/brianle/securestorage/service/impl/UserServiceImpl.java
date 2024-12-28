@@ -26,7 +26,7 @@ import project.brianle.securestorage.enumeration.Authority;
 import project.brianle.securestorage.enumeration.EventType;
 import project.brianle.securestorage.enumeration.LoginType;
 import project.brianle.securestorage.event.UserEvent;
-import project.brianle.securestorage.exceptions.ApiException;
+import project.brianle.securestorage.exceptions.CustomException;
 import project.brianle.securestorage.repository.ConfirmationRepository;
 import project.brianle.securestorage.repository.CredentialRepository;
 import project.brianle.securestorage.repository.RoleRepository;
@@ -73,12 +73,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public RoleEntity getRoleName(String name) {
         Optional<RoleEntity> role = roleRepository.findByNameIgnoreCase(name);
-        return role.orElseThrow(() -> new ApiException("Role not found"));
+        return role.orElseThrow(() -> new CustomException("Role not found"));
     }
 
     @Override
     public void verifyAccount(String key) {
-        ConfirmationEntity confirmationEntity = confirmationRepository.findByKey(key).orElseThrow(() -> new ApiException("Key not found."));
+        ConfirmationEntity confirmationEntity = confirmationRepository.findByKey(key).orElseThrow(() -> new CustomException("Key not found."));
         UserEntity userEntity = getUserEntityByEmail(confirmationEntity.getUserEntity().getEmail());
         userEntity.setEnabled(true);
         userRepository.save(userEntity);
@@ -114,7 +114,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse getUserByUserId(String userId) {
-        var userEntity = userRepository.findUserByUserId(userId).orElseThrow(() -> new ApiException("User not found"));
+        var userEntity = userRepository.findUserByUserId(userId).orElseThrow(() -> new CustomException("User not found"));
         return fromUserEntity(userEntity, userEntity.getRole(), getUserCredentialById(userEntity.getId()));
     }
 
@@ -127,7 +127,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public CredentialEntity getUserCredentialById(Long userId) {
         var credentialById = credentialRepository.getCredentialByUserEntityId(userId);
-        return credentialById.orElseThrow(() -> new ApiException("Unable to find user credential"));
+        return credentialById.orElseThrow(() -> new CustomException("Unable to find user credential"));
     }
 
     @Override
@@ -182,7 +182,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateResetPassword(String userId, String newPassword, String confirmNewPassword) {
-        if(!newPassword.equals(confirmNewPassword)) throw new ApiException("Passwords don't match. Please try again.");
+        if(!newPassword.equals(confirmNewPassword)) throw new CustomException("Passwords don't match. Please try again.");
         UserEntity userEntity = getUserEntityByUserId(userId);
         CredentialEntity credentialEntity = getUserCredentialById(userEntity.getId());
         credentialEntity.setPassword(encoder.encode(newPassword));
@@ -226,11 +226,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updatePassword(String userId, String currentPassword, String newPassword, String confirmNewPassword) {
-        if(!newPassword.equals(confirmNewPassword)) throw new ApiException("Password don't match. Please try again.");
+        if(!newPassword.equals(confirmNewPassword)) throw new CustomException("Password don't match. Please try again.");
         UserEntity userEntity = getUserEntityByUserId(userId);
         AccountUtils.verifyAccountStatus(userEntity);
         CredentialEntity credentialEntity = getUserCredentialById(userEntity.getId());
-        if(!encoder.matches(currentPassword, credentialEntity.getPassword())) throw new ApiException("Existing password is incorrect. Please try again.");
+        if(!encoder.matches(currentPassword, credentialEntity.getPassword())) throw new CustomException("Existing password is incorrect. Please try again.");
         credentialEntity.setPassword(encoder.encode(newPassword));
         credentialRepository.save(credentialEntity);
     }
@@ -266,7 +266,7 @@ public class UserServiceImpl implements UserService {
                     .fromCurrentContextPath()
                     .path("/user/image/" + filename).toUriString();
         } catch (Exception exception) {
-            throw new ApiException("Unable to save image");
+            throw new CustomException("Unable to save image");
         }
     };
 
@@ -275,7 +275,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private ConfirmationEntity getUserConfirmation(String key) {
-        return confirmationRepository.findByKey(key).orElseThrow(() -> new ApiException("Unable to find the key"));
+        return confirmationRepository.findByKey(key).orElseThrow(() -> new CustomException("Unable to find the key"));
     }
 
     private boolean verifyCode(String qrCode, String qrCodeSecret) {
@@ -285,22 +285,22 @@ public class UserServiceImpl implements UserService {
         if(codeVerifier.isValidCode(qrCodeSecret, qrCode)) {
             return true;
         } else {
-            throw new ApiException("Invalid QR code. Please try again.");
+            throw new CustomException("Invalid QR code. Please try again.");
         }
     }
 
     private UserEntity getUserEntityByUserId(String userId) {
         var userByUserId = userRepository.findUserByUserId(userId);
-        return userByUserId.orElseThrow(() -> new ApiException("User not found"));
+        return userByUserId.orElseThrow(() -> new CustomException("User not found"));
     }
 
     private UserEntity getUserEntityById(Long id) {
         var userById = userRepository.findById(id);
-        return userById.orElseThrow(() -> new ApiException("User not found"));
+        return userById.orElseThrow(() -> new CustomException("User not found"));
     }
 
     private UserEntity getUserEntityByEmail(String email){
-        return userRepository.findByEmailIgnoreCase(email).orElseThrow(() -> new ApiException("User not found"));
+        return userRepository.findByEmailIgnoreCase(email).orElseThrow(() -> new CustomException("User not found"));
     }
 
     private UserEntity createNewUser(String firstName, String lastName, String email){

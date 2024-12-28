@@ -86,7 +86,7 @@ public class UserController {
     }
 
     @PatchMapping("/update")
-    @PreAuthorize("hasAnyAuthority('user:update') or hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('user:update') or hasAnyRole('USER', 'ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<Response> update(@AuthenticationPrincipal UserResponse userPrinciple, @RequestBody UserRequest userRequest, HttpServletRequest request){
         var user = userService.updateUser(userPrinciple.getUserId(), userRequest.getFirstName(), userRequest.getLastName(), userRequest.getEmail(), userRequest.getPhone(), userRequest.getBio());
         return ResponseEntity.ok().body(getResponse(request, of("user", user), "User updated successfully", OK));

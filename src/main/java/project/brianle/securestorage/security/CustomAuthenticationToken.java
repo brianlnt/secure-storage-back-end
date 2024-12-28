@@ -3,7 +3,7 @@ package project.brianle.securestorage.security;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import project.brianle.securestorage.dto.response.UserResponse;
-import project.brianle.securestorage.exceptions.ApiException;
+import project.brianle.securestorage.exceptions.CustomException;
 
 import java.util.Collection;
 
@@ -45,7 +45,7 @@ public class CustomAuthenticationToken extends AbstractAuthenticationToken {
     public Object getPrincipal() {return this.user;}
 
     @Override
-    public void setAuthenticated(boolean authenticated) { throw new ApiException("You cannot set authentication");}
+    public void setAuthenticated(boolean authenticated) { throw new CustomException("You cannot set authentication");}
 
     @Override
     public boolean isAuthenticated() {return this.authenticated;}

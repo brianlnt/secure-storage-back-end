@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import project.brianle.securestorage.domain.CustomUserDetails;
 import project.brianle.securestorage.dto.response.UserResponse;
 import project.brianle.securestorage.entity.CredentialEntity;
-import project.brianle.securestorage.exceptions.ApiException;
 import project.brianle.securestorage.service.UserService;
 
 import java.util.function.Consumer;

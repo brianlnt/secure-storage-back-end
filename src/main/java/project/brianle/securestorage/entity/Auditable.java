@@ -8,8 +8,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.util.AlternativeJdkIdGenerator;
-import project.brianle.securestorage.domain.RequestContext;
-import project.brianle.securestorage.exceptions.ApiException;
+import project.brianle.securestorage.exceptions.CustomException;
 
 import java.time.LocalDateTime;
 
@@ -43,7 +42,7 @@ public abstract class Auditable {
     @PrePersist
     public void beforePersist(){
         Long userId = 0L; //RequestContext.getUserId();
-        if(userId == null){ throw new ApiException("Cannot persist entity without user ID"); }
+        if(userId == null){ throw new CustomException("Cannot persist entity without user ID"); }
         setCreatedBy(userId);
         setCreatedAt(LocalDateTime.now());
         setUpdatedBy(userId);
@@ -53,7 +52,7 @@ public abstract class Auditable {
     @PreUpdate
     public void beforeUpdate(){
         Long userId = 0L; //RequestContext.getUserId();
-        if(userId == null){ throw new ApiException("Cannot update entity without user ID"); }
+        if(userId == null){ throw new CustomException("Cannot update entity without user ID"); }
         setUpdatedBy(userId);
         setUpdatedAt(LocalDateTime.now());
     }

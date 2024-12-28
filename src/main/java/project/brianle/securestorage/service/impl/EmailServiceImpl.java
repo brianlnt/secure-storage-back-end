@@ -1,7 +1,5 @@
 package project.brianle.securestorage.service.impl;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,7 +7,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import project.brianle.securestorage.exceptions.ApiException;
+import project.brianle.securestorage.exceptions.CustomException;
 import project.brianle.securestorage.service.EmailService;
 
 import static project.brianle.securestorage.utils.EmailUtils.getNewAccountMessage;
@@ -39,7 +37,7 @@ public class EmailServiceImpl implements EmailService {
             sender.send(message);
         } catch (Exception exception){
             log.error(exception.getMessage());
-            throw new ApiException("Unable to send email");
+            throw new CustomException("Unable to send email");
         }
     }
 
@@ -55,7 +53,7 @@ public class EmailServiceImpl implements EmailService {
             sender.send(message);
         } catch (Exception exception){
             log.error(exception.getMessage());
-            throw new ApiException("Unable to send email");
+            throw new CustomException("Unable to send email");
         }
     }
 }

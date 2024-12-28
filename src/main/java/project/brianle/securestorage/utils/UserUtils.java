@@ -9,7 +9,7 @@ import project.brianle.securestorage.dto.response.UserResponse;
 import project.brianle.securestorage.entity.CredentialEntity;
 import project.brianle.securestorage.entity.RoleEntity;
 import project.brianle.securestorage.entity.UserEntity;
-import project.brianle.securestorage.exceptions.ApiException;
+import project.brianle.securestorage.exceptions.CustomException;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -73,7 +73,7 @@ public class UserUtils {
         try {
             imageData = generator.generate(data);
         } catch (Exception exception) {
-            throw new ApiException("Unable to create QR code URI");
+            throw new CustomException("Unable to create QR code URI");
         }
         return getDataUriForImage(imageData, generator.getImageMimeType());
 
