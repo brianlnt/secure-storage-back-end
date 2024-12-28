@@ -9,8 +9,9 @@ import org.springframework.stereotype.Repository;
 import project.brianle.securestorage.dto.IDocument;
 import project.brianle.securestorage.entity.DocumentEntity;
 
-import static project.brianle.securestorage.constant.Constants.SELECT_DOCUMENTS_BY_NAME_QUERY;
-import static project.brianle.securestorage.constant.Constants.SELECT_DOCUMENTS_QUERY;
+import java.util.Optional;
+
+import static project.brianle.securestorage.constant.Constants.*;
 
 @Repository
 public interface DocumentRepository extends JpaRepository<DocumentEntity, Long> {
@@ -19,4 +20,7 @@ public interface DocumentRepository extends JpaRepository<DocumentEntity, Long> 
 
     @Query(countQuery = "SELECT COUNT(*) FROM documents WHERE name ~* :documentName", value = SELECT_DOCUMENTS_BY_NAME_QUERY, nativeQuery = true)
     Page<IDocument> findDocumentsByName(@Param("documentName") String documentName, Pageable pageable);
+
+    @Query(value = SELECT_DOCUMENT_QUERY, nativeQuery = true)
+    Optional<IDocument> findDocumentByDocumentId(String documentId);
 }

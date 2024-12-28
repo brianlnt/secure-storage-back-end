@@ -45,4 +45,10 @@ public class DocumentController {
         var newDocument = documentService.getDocuments(page, size, name);
         return ResponseEntity.ok().body(getResponse(request, Map.of("documents", newDocument), "Document(s) retrieved.", HttpStatus.OK));
     }
+
+    @GetMapping("/{documentId}")
+    public ResponseEntity<Response> getDocument(@AuthenticationPrincipal UserResponse user, @PathVariable("documentId") String documentId, HttpServletRequest request) {
+        var newDocument = documentService.getDocumentByDocumentId(documentId);
+        return ResponseEntity.ok().body(getResponse(request, Map.of("documents", newDocument), "Document retrieved.", HttpStatus.OK));
+    }
 }
