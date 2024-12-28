@@ -45,7 +45,7 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public Page<IDocument> getDocuments(int page, int size, String name) {
-        return null;
+        return documentRepository.findDocumentsByName(name, PageRequest.of(page, size, Sort.by("name")));
     }
 
     @Override

@@ -36,4 +36,13 @@ public class DocumentController {
         var newDocument = documentService.getDocuments(page, size);
         return ResponseEntity.ok().body(getResponse(request, Map.of("documents", newDocument), "Document(s) retrieved.", HttpStatus.OK));
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<Response> searchDocument(@AuthenticationPrincipal UserResponse user, HttpServletRequest request,
+                                                @RequestParam(value = "page", defaultValue = "0") int page,
+                                                @RequestParam(value = "size", defaultValue = "5") int size,
+                                                @RequestParam(value = "name", defaultValue = "5") String name) {
+        var newDocument = documentService.getDocuments(page, size, name);
+        return ResponseEntity.ok().body(getResponse(request, Map.of("documents", newDocument), "Document(s) retrieved.", HttpStatus.OK));
+    }
 }
