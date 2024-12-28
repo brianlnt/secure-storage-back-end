@@ -33,7 +33,6 @@ import project.brianle.securestorage.repository.RoleRepository;
 import project.brianle.securestorage.repository.UserRepository;
 import project.brianle.securestorage.service.UserService;
 import project.brianle.securestorage.utils.AccountUtils;
-import project.brianle.securestorage.utils.UserUtils;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -44,7 +43,7 @@ import java.util.function.BiFunction;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static project.brianle.securestorage.constant.Constants.PHOTO_DIRECTORY;
+import static project.brianle.securestorage.constant.Constants.FILE_STORAGE;
 import static project.brianle.securestorage.utils.UserUtils.*;
 
 @Service
@@ -244,10 +243,16 @@ public class UserServiceImpl implements UserService {
         return photoUrl;
     }
 
+    @Override
+    public UserResponse getUserById(Long id) {
+        var userEntity = getUserEntityById(id);
+        return fromUserEntity(userEntity, userEntity.getRole(), getUserCredentialById(userEntity.getId()));
+    }
+
     public static BiFunction<String, MultipartFile, String> photoFunction = (id, file) -> {
         var filename = id + ".png";
         try {
-            var fileStorageLocation = Paths.get(PHOTO_DIRECTORY).toAbsolutePath().normalize();
+            var fileStorageLocation = Paths.get(FILE_STORAGE).toAbsolutePath().normalize();
             if(!Files.exists(fileStorageLocation)) {Files.createDirectories(fileStorageLocation);}
             Files.copy(file.getInputStream(), fileStorageLocation.resolve(filename), REPLACE_EXISTING);
             return ServletUriComponentsBuilder

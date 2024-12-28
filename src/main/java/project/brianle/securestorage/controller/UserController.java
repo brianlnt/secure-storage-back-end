@@ -29,7 +29,7 @@ import static java.util.Map.of;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 import static org.springframework.http.MediaType.IMAGE_PNG_VALUE;
-import static project.brianle.securestorage.constant.Constants.PHOTO_DIRECTORY;
+import static project.brianle.securestorage.constant.Constants.FILE_STORAGE;
 import static project.brianle.securestorage.enumeration.TokenType.ACCESS;
 import static project.brianle.securestorage.enumeration.TokenType.REFRESH;
 import static project.brianle.securestorage.utils.RequestUtils.getResponse;
@@ -150,7 +150,7 @@ public class UserController {
 
     @GetMapping(path = "/image/{filename}", produces = { IMAGE_PNG_VALUE, IMAGE_JPEG_VALUE })
     public byte[] getPhoto(@PathVariable("filename") String filename) throws IOException{
-        return Files.readAllBytes(Paths.get(PHOTO_DIRECTORY + filename));
+        return Files.readAllBytes(Paths.get(FILE_STORAGE + filename));
     }
 
     @PostMapping("/logout")
