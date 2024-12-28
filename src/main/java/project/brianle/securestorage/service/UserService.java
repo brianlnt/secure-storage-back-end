@@ -38,4 +38,6 @@ public interface UserService {
     String uploadPhoto(String userId, MultipartFile file);
 
     UserResponse getUserById(Long id);
+
+    UserResponse getUsers();
 }

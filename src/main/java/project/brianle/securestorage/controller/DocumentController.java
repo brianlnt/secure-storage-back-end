@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,12 +31,14 @@ public class DocumentController {
     private final DocumentService documentService;
 
     @PostMapping("/upload")
+    @PreAuthorize("hasAnyAuthority('document:update') or hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<Response> saveDocument(@AuthenticationPrincipal UserResponse user, @RequestParam("files") List<MultipartFile> documents, HttpServletRequest request) {
         var newDocument = documentService.saveDocuments(user.getUserId(), documents);
         return ResponseEntity.created(URI.create("")).body(getResponse(request, Map.of("documents", newDocument), "Document(s) uploaded successfully.", HttpStatus.CREATED));
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('document:read') or hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<Response> getDocument(@AuthenticationPrincipal UserResponse user, HttpServletRequest request,
                                                 @RequestParam(value = "page", defaultValue = "0") int page,
                                                 @RequestParam(value = "size", defaultValue = "5") int size) {
@@ -44,6 +47,7 @@ public class DocumentController {
     }
 
     @GetMapping("/search")
+    @PreAuthorize("hasAnyAuthority('document:read') or hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<Response> searchDocument(@AuthenticationPrincipal UserResponse user, HttpServletRequest request,
                                                 @RequestParam(value = "page", defaultValue = "0") int page,
                                                 @RequestParam(value = "size", defaultValue = "5") int size,
@@ -53,18 +57,21 @@ public class DocumentController {
     }
 
     @GetMapping("/{documentId}")
+    @PreAuthorize("hasAnyAuthority('document:read') or hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<Response> getDocument(@AuthenticationPrincipal UserResponse user, @PathVariable("documentId") String documentId, HttpServletRequest request) {
         var newDocument = documentService.getDocumentByDocumentId(documentId);
         return ResponseEntity.ok().body(getResponse(request, Map.of("documents", newDocument), "Document retrieved successfully.", HttpStatus.OK));
     }
 
     @PatchMapping
+    @PreAuthorize("hasAnyAuthority('document:update') or hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<Response> updateDocument(@AuthenticationPrincipal UserResponse user, @RequestBody UpdateDocumentRequest updateDocumentRequest, HttpServletRequest request){
         var updateDocument = documentService.updateDocument(updateDocumentRequest.getDocumentId(), updateDocumentRequest.getName(), updateDocumentRequest.getDescription());
         return ResponseEntity.ok().body(getResponse(request, Map.of("documents", updateDocument), "Document updated successfully.", HttpStatus.OK));
     }
 
     @GetMapping("/download/{documentName}")
+    @PreAuthorize("hasAnyAuthority('document:read') or hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<Resource> downloadDocument(@AuthenticationPrincipal UserResponse user, @PathVariable("documentName") String documentName) throws IOException {
         var resource = documentService.getResource(documentName);
         var httpHeaders = new HttpHeaders();

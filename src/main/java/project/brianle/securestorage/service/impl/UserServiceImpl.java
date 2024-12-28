@@ -37,6 +37,7 @@ import project.brianle.securestorage.utils.AccountUtils;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -247,6 +248,12 @@ public class UserServiceImpl implements UserService {
     public UserResponse getUserById(Long id) {
         var userEntity = getUserEntityById(id);
         return fromUserEntity(userEntity, userEntity.getRole(), getUserCredentialById(userEntity.getId()));
+    }
+
+    @Override
+    public UserResponse getUsers() {
+        List<UserEntity> user = userRepository.findAll();
+        return fromUserEntity(user.get(0), user.get(0).getRole(), getUserCredentialById(user.get(0).getId()));
     }
 
     public static BiFunction<String, MultipartFile, String> photoFunction = (id, file) -> {
