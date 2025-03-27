@@ -25,17 +25,17 @@ public class Application {
     @Bean
     CommandLineRunner commandLineRunner(RoleRepository roleRepository) {
         return args -> {
-			RequestContext.setUserId(0L);
-			RoleEntity userRole = new RoleEntity();
-			userRole.setName(Authority.USER.name());
-			userRole.setAuthorities(Authority.USER.getValue());
-			roleRepository.save(userRole);
-
-            RoleEntity adminRole = new RoleEntity();
-			adminRole.setName(Authority.ADMIN.name());
-			adminRole.setAuthorities(Authority.ADMIN.getValue());
-			roleRepository.save(adminRole);
-			RequestContext.start();
+//			RequestContext.setUserId(0L);
+//			RoleEntity userRole = new RoleEntity();
+//			userRole.setName(Authority.USER.name());
+//			userRole.setAuthorities(Authority.USER.getValue());
+//			roleRepository.save(userRole);
+//
+//            RoleEntity adminRole = new RoleEntity();
+//			adminRole.setName(Authority.ADMIN.name());
+//			adminRole.setAuthorities(Authority.ADMIN.getValue());
+//			roleRepository.save(adminRole);
+//			RequestContext.start();
         };
     }
 }
