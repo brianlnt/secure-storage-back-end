@@ -100,7 +100,7 @@ public class JwtServiceImpl extends JwtConfiguration implements JwtService {
                 cookie.setSecure(true);
                 cookie.setMaxAge(2 * 60);
                 cookie.setPath("/");
-                cookie.setAttribute("SameSite", NONE.name());
+                cookie.setAttribute("SameSite", NONE.name()); //JWT được lưu trong cookie có thuộc tính HttpOnly, Secure, và SameSite để tăng cường bảo mật.
                 response.addCookie(cookie);
             }
             case REFRESH -> {
