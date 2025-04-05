@@ -1,4 +1,24 @@
-# Application Overview: Secure Storage
+<div align="center">
+
+# **Secure Storage**
+
+*Secure your data, empower your peace of mind.*
+
+![Last Commit](https://img.shields.io/badge/last%20commit-today-blue?style=flat-square&logo=git)
+![Language](https://img.shields.io/badge/java-96.2%25-blue?style=flat-square&logo=java)
+![Languages Used](https://img.shields.io/badge/languages-2-blue?style=flat-square)
+
+---
+
+*Built with the tools and technologies:*
+
+![Spring](https://img.shields.io/badge/Spring-black?style=flat-square&logo=spring)
+![XML](https://img.shields.io/badge/XML-blue?style=flat-square&logo=xml)
+
+</div>
+
+
+# Application Overview:
 
 ## Introduction
 The Secure Storage is a reliable and intuitive solution designed to securely handle document storage, updates, uploads, and deletions. It provides a centralized platform for managing sensitive information, ensuring efficiency and security for organizations. With a user-friendly interface and advanced security features, the system serves businesses that require a robust and dependable document management platform.
