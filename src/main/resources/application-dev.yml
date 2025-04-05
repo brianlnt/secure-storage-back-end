@@ -65,3 +65,9 @@ server:
 jwt:
   expiration: 432_000_000
   secret: ${JWT_SECRET}
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true

@@ -45,6 +45,7 @@ public class FilterChainConfiguration {
                 .authorizeHttpRequests(request ->
                         request.requestMatchers(PUBLIC_URLS).permitAll()
                                 .requestMatchers(OPTIONS).permitAll()
+                                .requestMatchers("/actuator/**", "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/api-docs/**").permitAll()
                                 .requestMatchers(DELETE, "/user/delete/**")
                                 .hasAnyAuthority("user:delete")
                                 .requestMatchers(DELETE, "/document/delete/**")
