@@ -1,0 +1,29 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8085:8085"
+    depends_on:
+      - db
+    networks:
+      - secure-storage-network
+
+  db:
+    image: postgres:15-alpine
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_DATABASE=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=letmein
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - secure-storage-network
+
+networks:
+  secure-storage-network:
+    driver: bridge
+
+volumes:
+  postgres_data: 
