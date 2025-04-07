@@ -9,9 +9,9 @@ spring:
     deserialization:
       fail-on-unknown-properties: false
   datasource:
-    url: jdbc:postgresql://${POSTGRESQL_HOST}:${POSTGRESQL_PORT}/${POSTGRESQL_DATABASE}
-    username: ${POSTGRESQL_USERNAME}
-    password: ${POSTGRESQL_PASSWORD}
+    url: jdbc:postgresql://<POSTGRESQL_HOST>:<POSTGRESQL_PORT>/<POSTGRESQL_DATABASE>
+    username: <POSTGRESQL_USERNAME>
+    password: <POSTGRESQL_PASSWORD>
   jpa:
     open-in-view: false
     database-platform: org.hibernate.dialect.PosgreSQLInnoDBDialect
@@ -36,10 +36,10 @@ spring:
       max-file-size: 1000MB
       max-request-size: 1000MB
   mail:
-    host: ${EMAIL_HOST}
-    port: ${EMAIL_PORT}
-    username: ${EMAIL_ID}
-    password: ${EMAIL_PASSWORD}
+    host: <EMAIL_HOST>
+    port: ${EMAIL_PORT:587}
+    username: <EMAIL_ID>
+    password: <EMAIL_PASSWORD>
     default-encoding: UTF-8
     properties:
       mail:
@@ -54,7 +54,7 @@ spring:
             enable: true
             required: true
     verify:
-      host: ${VERIFY_EMAIL_HOST}
+      host: <VERIFY_EMAIL_HOST>
 server:
   port: ${CONTAINER_PORT:8080}
   error:
@@ -64,7 +64,7 @@ server:
 
 jwt:
   expiration: 432_000_000
-  secret: ${JWT_SECRET}
+  secret: <JWT_SECRET>
 
 springdoc:
   api-docs:
