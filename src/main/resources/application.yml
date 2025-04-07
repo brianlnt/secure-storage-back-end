@@ -9,9 +9,9 @@ spring:
     deserialization:
       fail-on-unknown-properties: false
   datasource:
-    url: jdbc:postgresql://db:5432/postgres
-    username: postgres
-    password: letmein
+    url: jdbc:postgresql://<POSTGRESQL_HOST>:<POSTGRESQL_PORT>/<POSTGRESQL_DATABASE>
+    username: <POSTGRESQL_USERNAME>
+    password: <POSTGRESQL_PASSWORD>
   jpa:
     open-in-view: false
     database-platform: org.hibernate.dialect.PosgreSQLInnoDBDialect
